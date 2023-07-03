@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>회원가입</title>
+    <meta charset="utf-8">
+    <style>
+        h3 {background-color: #aaffaa;
+            text-align: center;}
+    </style>
+</head>
+<script th:inline="javascript">
+
+    function c() {
+
+         const p1 = document.getElementById('pw').value;
+         const p2 = document.getElementById('pw2').value;
+         if( p1 != p2 ) {
+             alert("비밀번호가 일치 하지 않습니다");
+             return false;
+         } else{
+             alert("회원가입 성공!! 로그인 해주세요.");
+             return true;
+         }
+    }
+
+
+
+
+</script>
+
+<body>
+<h3>KIM SERVER</h3>
+<div class="container">
+
+    <form role="form" action="/register" th:object="${memberForm}" method="post">
+        <div class="form-group">
+            <label th:for="name">이름</label>
+            <input type="text" required th:field="*{name}" class="form-control" placeholder="이름을 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label th:for="email">이메일</label>
+            <input type="text" required th:field="*{email}" class="form-control"
+                   placeholder="이메일을 입력하세요."
+                   th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'">
+            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일 존재</p>
+        </div>
+
+        <div class="form-group">
+            <label th:for="pw">비밀번호</label>
+            <input type="password" required id="pw" th:field="*{pw}" class="form-control" placeholder="비밀번호를 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label th:for="pw">비밀번호 확인</label>
+            <input type="password" required id="pw2" class="form-control" placeholder="다시 비밀번호를 입력하세요">
+        </div>
+
+        <button type="submit" onclick="return c()" class="btn btn-primary">회원가입</button>
+    </form>
+    <a href="/home">홈으로</a>
+</div>
+</body>
+</html>
