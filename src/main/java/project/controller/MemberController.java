@@ -47,7 +47,7 @@ public class MemberController {
             member.setName(form.getName());
             member.setEmail(form.getEmail());
             member.setPw(form.getPw());
-
+//sssss
             memberService.join(member);
             return "redirect:/login";
     }
