@@ -1,2 +1,1 @@
-really
 JPA practice
