@@ -1,15 +1,57 @@
 <!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>홈</title>
     <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8"/>
+    <style>
+        h3 {background-color: #aaffaa;
+            text-align: center;}
+        .cell {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
+<h3>KIM SERVER</h3>
+
+<a th:if="${session.member == null}" href="/members/login">로그인</a>
+<a th:if="${session.member == null}" href="/members/register">회원가입</a>
+
+<a th:if="${session.member != null}" href="/members/logout">로그아웃</a>
+<a th:if="${session.member != null}" th:text="${session.member.name + ' 님 반갑습니다'}"></a>
+<a href="/boards/new">글쓰기</a>
 
 
-<a href="/login">로그인</a> |
-<a href="/register">회원가입</a>
 
-<a href="/logout">로그아웃</a>
+<div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>내용</th>
+            <th>수정날짜</th>
+            <th>글쓴이</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${boards}">
+            <td><div th:text="${board.title}" class="cell"></div></td>
+            <td>
+                <div class="cell">
+                    <a th:href="@{/boards/{id}(id=${board.id})}" th:text="${board.content}"></a>
+                </div>
+            </td>
+            <td><div th:text="${board.boardDate}" class="cell"></div></td>
+            <td>
+                <div class="cell">
+                    <a th:href="@{/members/{id}(id=${board.member.id})}" th:text="${board.member.name}"></a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 </body>
 </html>

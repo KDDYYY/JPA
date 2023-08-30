@@ -11,7 +11,6 @@
 <script th:inline="javascript">
 
     function c() {
-
          const p1 = document.getElementById('pw').value;
          const p2 = document.getElementById('pw2').value;
          if( p1 != p2 ) {
@@ -23,16 +22,12 @@
          }
     }
 
-
-
-
 </script>
 
 <body>
 <h3>KIM SERVER</h3>
 <div class="container">
-
-    <form role="form" action="/register" th:object="${memberForm}" method="post">
+    <form role="form" action="/members/register" th:object="${memberForm}" method="post">
         <div class="form-group">
             <label th:for="name">이름</label>
             <input type="text" required th:field="*{name}" class="form-control" placeholder="이름을 입력하세요">

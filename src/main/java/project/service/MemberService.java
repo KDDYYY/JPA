@@ -3,12 +3,10 @@ package project.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.controller.MemberForm;
 import project.domain.Member;
 import project.repository.MemberRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -24,6 +22,12 @@ public class MemberService {
             memberRepository.save(member);
             return member.getId();
     }
+
+    //회원 이름 반환
+    public String nameReturn(String email){
+        return (memberRepository.findByEmail(email)).getName();
+    }
+
 
     //중복 회원 검증
     private void emailCheck(Member member) {
@@ -54,5 +58,12 @@ public class MemberService {
 
 
 
+    public Member findOne(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+
+    public Member findByEmail(String email){
+        return memberRepository.findByEmail(email);
+    }
 
 }

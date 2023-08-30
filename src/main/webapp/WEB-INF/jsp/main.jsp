@@ -12,16 +12,44 @@
 </head>
 <body>
 <h3>KIM SERVER</h3>
-<c:if test="${empty sessionScope.me}">
+
+<button type="button" style = "float:left;" onclick="location.href='/boards/new';">글쓰기</button>
+
+<c:if test="${empty sessionScope.loginMember}">
     <button type="button" style = "float:right;" onclick="location.href='/login';">로그인</button>
     <button type="button" style = "float:right;" onclick="location.href='/register';">회원가입</button>
 </c:if>
 
-<c:if test="${not empty sessionScope.me}">
+<c:if test="${not empty sessionScope.loginMember}">
     <button type="button" style = "float:right;" onclick="location.href='/logout';">로그아웃</button>
-    <button type="button" style = "float:right;" onclick="location.href='/withdraw';">회원탈퇴</button>
-    <center><p>환영합니다 ${sessionScope.me.email} 님 </p></center>
+    <button type="button" style = "float:right;" onclick="location.href='/myinfo';">내 정보</button>
+    <center><p>환영합니다 ${sessionScope.loginMember.name} 님 </p></center>
 </c:if>
+
+
+
+<div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>내용</th>
+            <th>수정날짜</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${boards}">
+            <td th:text="${board.title}"></td>
+            <td th:text="${board.content}"></td>
+            <td th:text="${board.boardDate}"></td>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
 
 </body>
 </html>

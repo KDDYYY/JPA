@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${board.title}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        h3 {background-color: #aaffaa;
+            text-align: center;}
+    </style>
+</head>
+<body>
+<h3>KIM SERVER</h3>
+
+<!-- 게시물 상세 정보 표시 -->
+<div>
+    <h2 th:text="${board.title}"></h2>
+    <p th:text="${board.content}"></p>
+    <p>작성일: <span th:text="${board.boardDate}"></span></p>
+    <p>작성자: <span th:text="${board.member.name}"></span></p>
+    <!-- 기타 상세 정보 표시 -->
+</div>
+
+
+<a href="/home">홈으로</a>
+</body>
+</html>

@@ -9,10 +9,7 @@ import lombok.Setter;
 @Setter
 public class MemberForm {
 
-//    @NotNull(message = "회원 아이디는 필수 입니다.")
-//    private Long id;
-
-   // @NotEmpty(message = "회원 이름은 필수 입니다.")
+    //@NotEmpty(message = "회원 이름은 필수 입니다.")
     private String name;
 
     @NotEmpty(message = "회원 이메일은 필수 입니다.")

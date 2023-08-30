@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import project.domain.Member;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional
@@ -23,10 +22,11 @@ public class MemberRepository {
     }
 
     //조회
-    public Member finById(Long id){
+    public Member findById(Long id){
         return em.find(Member.class, id);
 
     }
+
 
     //로그인
     public Member findByEmail(String email) {
