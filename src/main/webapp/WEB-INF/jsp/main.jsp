@@ -16,13 +16,13 @@
 <button type="button" style = "float:left;" onclick="location.href='/boards/new';">글쓰기</button>
 
 <c:if test="${empty sessionScope.loginMember}">
-    <button type="button" style = "float:right;" onclick="location.href='/login';">로그인</button>
-    <button type="button" style = "float:right;" onclick="location.href='/register';">회원가입</button>
+    <button type="button" style = "float:right;" onclick="location.href='/memers/login';">로그인</button>
+    <button type="button" style = "float:right;" onclick="location.href='/members/register';">회원가입</button>
 </c:if>
 
 <c:if test="${not empty sessionScope.loginMember}">
-    <button type="button" style = "float:right;" onclick="location.href='/logout';">로그아웃</button>
-    <button type="button" style = "float:right;" onclick="location.href='/myinfo';">내 정보</button>
+    <button type="button" style = "float:right;" onclick="location.href='/members/logout';">로그아웃</button>
+    <button type="button" style = "float:right;" onclick="location.href='/myInfo';">내 정보</button>
     <center><p>환영합니다 ${sessionScope.loginMember.name} 님 </p></center>
 </c:if>
 

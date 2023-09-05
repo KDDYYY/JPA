@@ -85,15 +85,27 @@
             cursor: pointer;
             font-size: 16px;
         }
+        .sort-button {
+            background-color: #007bff;
+            color: white;
+            width: 60px; /* 설정할 너비 크기 */
+            height: 30px; /* 설정할 높이 크기 */
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: center;
+            line-height: 30px; /* 높이와 동일한 크기로 설정 */
+        }
     </style>
 </head>
 <body>
-<h3>KIM SERVER</h3>
+<a th:href="@{/home}"><h3>KIM SERVER</h3></a>
 
 <div class="navbar">
     <a th:if="${session.member == null}" href="/members/login">로그인</a>
     <a th:if="${session.member == null}" href="/members/register">회원가입</a>
     <a th:if="${session.member != null}" href="/members/logout">로그아웃</a>
+    <a th:if="${session.member != null}" href="/members/myInfo">내 정보</a>
     <a th:if="${session.member != null}" th:text="${session.member.name + ' 님 반갑습니다'}"></a>
     <a href="/boards/new">글쓰기</a>
 </div>
@@ -107,6 +119,9 @@
     </form>
 </div>
 
+<div class="sort-button">
+    <a href="/boards/click" class="sort-button">조회순</a>
+</div>
 
 <div>
     <table class="board-table">
@@ -132,8 +147,10 @@
             <td class="cell author-cell" th:text="${board.click}"></td>
         </tr>
         </tbody>
+
+
     </table>
 </div>
-<a href="/home">홈으로</a>
+
 </body>
 </html>

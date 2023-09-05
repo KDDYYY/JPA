@@ -32,10 +32,24 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Board> boards = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Reply> replies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Favorite> favorites = new ArrayList<>();
+
+
 
     public Member(String name, String email, Long pw) {
         this.name = name;
         this.email = email;
         this.pw = pw;
     }
+
+    //즐겨찾기
+    public void addFavorite(Favorite favorite){
+        favorites.add(favorite);
+        favorite.setMember(this);
+    }
+
 }

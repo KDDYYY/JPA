@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.transaction.annotation.Transactional;
+import project.domain.Board;
 import project.domain.Member;
 
 import java.util.List;
@@ -42,6 +43,14 @@ public class MemberRepository {
                 .setParameter("email", email)
                 .getResultList();
     }
+
+    //사용자가 쓴 게시글 목록
+    public List<Board> memberBoard(Long id){
+        return em.createQuery("select b from Board b where b.member.id =: id", Board.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
+
 
 }
 

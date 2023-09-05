@@ -2,27 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${member.id}"></title>
+    <title>내 정보</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style>
-        h3 {background-color: #aaffaa;
-            text-align: center;}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        h3 {
+            background-color: #aaffaa;
+            text-align: center;
+            padding: 10px;
+        }
+        .user-info {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .user-info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .user-info p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        .board-table th, .board-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .board-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .content-cell {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .date-cell {
+            width: 120px;
+        }
+        .author-cell {
+            max-width: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .title-cell{
+            max-width: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
-<body>
-<h3>KIM SERVER</h3>
 
-<!-- 게시물 상세 정보 표시 -->
-<div>
-    <h2 th:text="${member.id}"></h2>
-    <p th:text="${member.email}"></p>
+<body>
+<a th:href="@{/home}"><h3>KIM SERVER</h3></a>
+
+<!-- 사용자 정보 표시 -->
+<div class="user-info">
+    <h2 th:text="${session.member.name + '님의 정보'}"></h2>
+    <p><strong>이메일:</strong> <span th:text="${session.member.email}"></span></p>
 </div>
 
+<h2 th:text ="${session.member.name + '님이 쓴 게시글 목록'}"></h2>
 
-<a href="/home">홈으로</a>
+<table class="board-table">
+    <thead>
+    <tr>
+        <th>제목</th>
+        <th>내용</th>
+        <th class="date-cell">수정날짜</th>
+        <th class="author-cell">글쓴이</th>
+        <th class="author-cell">조회수</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="board : ${memberBoard}">
+        <td class="cell title-cell" th:text="${board.title}"></td>
 
+        <td class="cell content-cell">
+            <a th:href="@{/boards/{id}(id=${board.id})}" th:text="${board.content}"></a>
+        </td>
 
+        <td class="cell author-cell" th:text="${board.boardDate}"></td>
 
+        <td class="cell date-cell">
+            <a th:href="@{/members/{id}(id=${board.member.id})}" th:text="${board.member.name}"></a>
+        </td>
 
+        <td class="cell author-cell" th:text="${board.click}"></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

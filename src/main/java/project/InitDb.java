@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import project.domain.Board;
+import project.domain.Favorite;
 import project.domain.Member;
 
 import java.time.LocalDateTime;
@@ -34,8 +35,13 @@ public class InitDb {
             Board board = new Board("롤", "사이온", LocalDateTime.now());
             board.setMember(member);
 
+            Favorite favorite = new Favorite(member, board);
+
+            member.getFavorites().add(favorite);
+
             em.persist(member);
             em.persist(board);
+            em.persist(favorite);
         }
 
     }

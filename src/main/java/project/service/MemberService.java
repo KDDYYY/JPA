@@ -3,6 +3,7 @@ package project.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.domain.Board;
 import project.domain.Member;
 import project.repository.MemberRepository;
 
@@ -28,6 +29,10 @@ public class MemberService {
         return (memberRepository.findByEmail(email)).getName();
     }
 
+    //회원 id 반환
+    public Long idReturn(String email){
+        return (memberRepository.findByEmail(email)).getId();
+    }
 
     //중복 회원 검증
     private void emailCheck(Member member) {
@@ -39,16 +44,15 @@ public class MemberService {
 
     //로그인
     public Member login(Member member){
-        Member findMember = memberRepository.findByEmail(member.getEmail());
 
-        if(findMember == null){
+        if(member == null){
             //조회 결과가 없다
             return null;
         }else{
             //조회 결과가 있다.
-            if(member.getPw().equals(findMember.getPw())){
+            if(member.getPw().equals(member.getPw())){
                 //비밀번호 일치
-                return findMember;
+                return member;
             } else{
                 //비밀번호 불일치(로그인 실패)
                 return null;
@@ -56,7 +60,10 @@ public class MemberService {
         }
     }
 
-
+    //사용자가 쓴 게시물 목록
+    public List<Board> memberBoard(Long id){
+        return memberRepository.memberBoard(id);
+    }
 
     public Member findOne(Long memberId) {
         return memberRepository.findById(memberId);

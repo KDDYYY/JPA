@@ -1,12 +1,12 @@
 package project.controller;
 
-import com.oracle.wls.shaded.org.apache.xpath.operations.Mod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.dao.DataAccessException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.PathVariable;
+import project.domain.Board;
 import project.domain.Member;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import project.service.BoardService;
 import project.service.MemberService;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,65 +25,68 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/members/myinfo")
-    public String myInfo(){
-        return "myinfo";
+    private final BoardService boardService;
+
+    //내 정보
+    @GetMapping("/members/myInfo")
+    public String myInfo(Model model, HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+
+        List<Board> myBoards = boardService.findMyBoards(sessionMember.getId());
+        model.addAttribute("myBoards", myBoards);
+        return "practice/myInfo";
     }
 
 
+    //회원가입
     @GetMapping("/members/register")
-    public String registerForm(Model model){
+    public String signUpForm(Model model){
         model.addAttribute("memberForm", new MemberForm());
         return "practice/register";
     }
 
+    //회원가입
     @PostMapping("/members/register")
-    public String register(@Valid MemberForm form, BindingResult result) {
-
+    public String signUp(@Valid MemberForm form, BindingResult result) {
+    try {
         if (result.hasErrors()) {
             return "practice/register";
         }
-            Member member = new Member();
-            member.setName(form.getName());
-            member.setEmail(form.getEmail());
-            member.setPw(form.getPw());
 
-            memberService.join(member);
-            return "redirect:/members/login";
+        Member member = new Member(form.getName(), form.getName(), form.getPw());
+
+        memberService.join(member);
+        return "redirect:/members/login";
+    }catch (DataAccessException e){
+        return "practice/register";
+        }
     }
 
+    //로그인
     @GetMapping("/members/login")
-    public String loginForm(Model model){
+    public String signInForm(Model model){
         //model.addAttribute("memberForm", new MemberForm());
         return "practice/login";
     }
 
+    //로그인
     @PostMapping("/members/login")
-    public String signIn(@Valid @ModelAttribute MemberForm form, HttpSession session, Model model){
+    public String signIn(@Valid @ModelAttribute MemberForm form, HttpSession session){
        try {
-           Member member = new Member();
-           member.setEmail(form.getEmail());
-           member.setPw(form.getPw());
-           member.setName(memberService.nameReturn(form.getEmail()));
+           Member member = memberService.findByEmail(form.getEmail());
 
-           Member loginResult = memberService.login(member);
-
-           if (loginResult == null) {
-               //login 실패
+           if(member == null || (!member.getPw().equals(form.getPw()))){
                return "practice/login";
            }
 
            //성공
            session.setAttribute("member", member);
-           //model.addAttribute("member", member);
            return "redirect:/home";
 
            //login 실패
        }catch (DataAccessException e){
-           //attributes.addFlashAttribute("message")
            return "practice/login";
        }
-
     }
 
     //로그아웃
@@ -89,6 +95,18 @@ public class MemberController {
         session.invalidate();
         return "redirect:/home";
     }
+
+
+    //회원조회
+    @GetMapping("/members/{id}")
+    public String viewMember(@PathVariable Long id, Model model){
+        Member member = memberService.findOne(id);
+        List<Board> memberBoard = memberService.memberBoard(id);
+        model.addAttribute("member",member);
+        model.addAttribute("memberBoard", memberBoard);
+        return "practice/info";
+    }
+
 
 
     //회원탈퇴

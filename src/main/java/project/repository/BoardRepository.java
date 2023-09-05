@@ -5,6 +5,9 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.domain.Board;
+import project.domain.Favorite;
+import project.domain.Image;
+import project.domain.Reply;
 
 import java.util.List;
 
@@ -15,17 +18,92 @@ public class BoardRepository {
     @PersistenceContext
     private EntityManager em;
 
-    public void save(Board board){
+    //게시물 등록
+    public void saveBoard(Board board){
         em.persist(board);
     }
 
-    public Board findById(Long id){
-        return em.find(Board.class, id);
+    //파일 등록
+    public void saveFile(Image image){
+        em.persist(image);
+    }
+
+    public Board saveBoardReturn(Board board){
+        em.persist(board);
+        return board;
+    }
+
+    //즐겨 찾기 기능
+    public void addFavorite(Favorite favorite){
+        em.persist(favorite);
+    }
+
+    //즐겨 찾기 목록
+    public List<Board> favoriteList(Long id){
+        return em.createQuery("select f.board from Favorite f where f.member.id =: id", Board.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
+
+    //댓글 등록
+    public void saveReply(Reply reply){
+        em.persist(reply);
     }
 
 
+    //게시물 조회
+    public Board findByBoardId(Long id){
+        return em.find(Board.class, id);
+    }
+
+    //게시물 안의 이미지
+    public List<Image> findImagesByBoardId(Long id){
+        return em.createQuery("select i from Image i where i.board.id = :id", Image.class)
+                .setParameter("id", id)
+                .getResultList();
+
+    }
+
+
+    //게시물 리스트
     public List<Board> findAll(){
         return em.createQuery("select b from Board b", Board.class)
                 .getResultList();
     }
+
+    //페이지로 리스트 조회
+    public List<Board> findPaginatedBoards(int page, int size){
+        return em.createQuery("select b from Board b order by b.boardDate desc ", Board.class)
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    //댓글 리스트
+    public List<Reply> findReplyList(Long boardId){
+        return em.createQuery("select r from Reply r where r.board.id = :boardId ", Reply.class)
+                .setParameter("boardId", boardId)
+                .getResultList();
+    }
+
+    //검색기능
+    public List<Board> findSearchBoards(String keyword){
+        return em.createQuery("SELECT b FROM Board b WHERE b.title LIKE :keyword", Board.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getResultList();
+    }
+
+    //조회 정렬 기능
+    public List<Board> findClickBoards(){
+        return em.createQuery("select b from Board b order by b.click desc", Board.class)
+                .getResultList();
+    }
+
+    //내가 쓴 게시물 목록
+    public List<Board> findMyBoards(Long id){
+        return em.createQuery("select b from Board b where b.member.id = : id")
+                .setParameter("id", id)
+                .getResultList();
+    }
+
 }

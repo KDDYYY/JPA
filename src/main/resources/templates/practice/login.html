@@ -2,22 +2,78 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>로그인</title>
-    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style>
-        h3 {background-color: #aaffaa;
-            text-align: center;}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        h3 {
+            background-color: #aaffaa;
+            text-align: center;
+            padding: 10px;
+        }
+        .container {
+            max-width: 300px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007bff;
+        }
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
-<h3>KIM SERVER</h3>
-<form method="post" action="/members/login">
-    이메일 :<input type="text" required name="email"><br>
-    비밀번호 :<input type="password" required name="pw"><br>
-    <button type="submit">로그인</button>
-</form>
-
-    <a href="/home">홈으로</a>
+<a th:href="@{/home}"><h3>KIM SERVER</h3></a>
+<div class="container">
+    <form method="post" action="/members/login">
+        <label for="email">이메일</label>
+        <input type="text" required name="email">
+        <label for="pw">비밀번호</label>
+        <input type="password" required name="pw">
+        <button type="submit">로그인</button>
+    </form>
+</div>
 </body>
 </html>
-
-
