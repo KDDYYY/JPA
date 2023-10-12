@@ -60,6 +60,23 @@ public class MemberService {
         }
     }
 
+    //게시물 등록시 포인트
+    @Transactional
+    public void increaseBoardMemberPoint(Long memberId) {
+        Member member = memberRepository.findById(memberId);
+        member.setPt(member.getPt() + 3);
+        memberRepository.save(member);
+    }
+
+    //댓글 등록시 포인트
+    @Transactional
+    public void increaseReplyMemberPoint(Long memberId) {
+        Member member = memberRepository.findById(memberId);
+        member.setPt(member.getPt() + 1);
+        memberRepository.save(member);
+    }
+
+
     //사용자가 쓴 게시물 목록
     public List<Board> memberBoard(Long id){
         return memberRepository.memberBoard(id);

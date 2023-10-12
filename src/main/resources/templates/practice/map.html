@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Google Maps Example</title>
+    <!-- Google Maps API JavaScript 라이브러리를 로드합니다. -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC026p5bYXcL407xPnS0-bwp_trmKuAb84"></script>
+
+    <style>
+        h3 {
+            background-color: #aaffaa;
+            text-align: center;
+            padding: 10px;
+        }
+        .navbar {
+            background-color: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<a th:href="@{/home}"><h3>KIM SERVER</h3></a>
+
+<div class="navbar">
+    <a th:if="${session.member == null}" href="/members/login">로그인 |</a>
+    <a th:if="${session.member == null}" href="/members/register">회원가입 |</a>
+    <a th:if="${session.member != null}" href="/members/logout">로그아웃 |</a>
+    <a th:if="${session.member != null}" href="/members/myInfo">내 정보 |</a>
+    <a th:if="${session.member != null}" href="/members/favorites">즐겨찾기 목록 |</a>
+    <a th:if="${session.member != null}" th:text="${session.member.name + ' 님 반갑습니다 |'}"></a>
+    <a href="/boards/new">글쓰기</a>
+</div>
+
+<h1>Google Maps</h1>
+<div>
+    <input type="text" id="addressInput" placeholder="Enter an address">
+    <button onclick="searchAddress()">Search</button>
+</div>
+
+<div id="map"></div>
+
+<script>
+    var map;
+
+    // JavaScript로 구글 지도를 초기화합니다.
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15, // 확대 수준
+            center: { lat: 0, lng: 0 } // 초기 중심 좌표 (임시 값)
+        });
+    }
+
+    // 주소 검색 함수를 정의합니다.
+    function searchAddress() {
+        var geocoder = new google.maps.Geocoder();
+        var address = document.getElementById('addressInput').value;
+
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status === 'OK') {
+                var location = results[0].geometry.location;
+                map.setCenter(location); // 맵의 중심을 검색 결과 위치로 설정
+
+                // 기존 마커 제거
+                if (map.marker) {
+                    map.marker.setMap(null);
+                }
+
+                // 맵에 마커 추가
+                map.marker = new google.maps.Marker({
+                    map: map,
+                    position: location,
+                    title: address
+                });
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+</script>
+<!-- Google Maps JavaScript API를 로드합니다. -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC026p5bYXcL407xPnS0-bwp_trmKuAb84&callback=initMap" async defer></script>
+
+</body>
+</html>

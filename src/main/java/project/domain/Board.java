@@ -27,19 +27,10 @@ public class Board {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "FILE_PATH")
-    private String filePath; // 파일 저장 경로
-
-    @Column(name = "FILE_EXTENSION")
-    private String fileExtension; // 파일 확장자
-
-    @Column(name = "FILE_SIZE")
-    private long fileSize; // 파일 크기
-
     @Column(name = "UPLOAD_DATE")
     private LocalDateTime boardDate;
 
-    private int click = 0; // 죄호수
+    private int click = 0; // 조회수
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,15 +47,6 @@ public class Board {
     public Board(String title, String content, LocalDateTime boardDate) {
         this.title = title;
         this.content = content;
-        this.boardDate = boardDate;
-    }
-
-    public Board(String title, String content, String filePath, String fileExtension, long fileSize, LocalDateTime boardDate) {
-        this.title = title;
-        this.content = content;
-        this.filePath = filePath;
-        this.fileExtension = fileExtension;
-        this.fileSize = fileSize;
         this.boardDate = boardDate;
     }
 }

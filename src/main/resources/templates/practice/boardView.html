@@ -77,12 +77,14 @@
         </div>
     </div>
 
-
-
     <p th:text="${board.content}"></p>
     <p>작성일: <span th:text="${board.boardDate}"></span></p>
     <p>작성자: <span th:text="${board.member.name}"></span></p>
-    <!-- 기타 상세 정보 표시 -->
+
+
+    <div th:if="${session.member != null and session.member.id == board.member.id}">
+        <a th:href="@{/boards/{id}/modify(id=${board.id})}" class="btn btn-primary">수정하기</a>
+    </div>
 </div>
 
 

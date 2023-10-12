@@ -14,8 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import project.domain.Message;
 import project.service.BoardService;
 import project.service.MemberService;
+import project.service.MessageService;
 
 import java.util.List;
 
@@ -27,13 +29,22 @@ public class MemberController {
 
     private final BoardService boardService;
 
+    private final MessageService messageService;
+
     //내 정보
     @GetMapping("/members/myInfo")
     public String myInfo(Model model, HttpSession session){
         Member sessionMember = (Member) session.getAttribute("member");
+        Member member = memberService.findOne(sessionMember.getId());
 
-        List<Board> myBoards = boardService.findMyBoards(sessionMember.getId());
+        List<Board> myBoards = boardService.findMyBoards(member.getId());
+        List<Message> sendMessage = messageService.findSendMessage(member.getId());
+        List<Message> receiveMessage = messageService.findReceiveMessage(member.getId());
+
+        model.addAttribute("pt", member.getPt());
         model.addAttribute("myBoards", myBoards);
+        model.addAttribute("sendMessage", sendMessage);
+        model.addAttribute("receiveMessage", receiveMessage);
         return "practice/myInfo";
     }
 
@@ -74,13 +85,13 @@ public class MemberController {
     public String signIn(@Valid @ModelAttribute MemberForm form, HttpSession session){
        try {
            Member member = memberService.findByEmail(form.getEmail());
-
            if(member == null || (!member.getPw().equals(form.getPw()))){
                return "practice/login";
            }
 
            //성공
            session.setAttribute("member", member);
+
            return "redirect:/home";
 
            //login 실패

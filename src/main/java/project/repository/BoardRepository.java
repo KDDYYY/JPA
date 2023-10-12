@@ -28,6 +28,20 @@ public class BoardRepository {
         em.persist(image);
     }
 
+    // 게시물 수정
+    public void modifyBoard(Board board) {
+            // 업데이트된 엔티티를 merge
+            em.merge(board);
+    }
+
+    //이미지 삭제
+    public void deleteImage(Board board){
+        em.createQuery("delete from Image i where i.board.id =: id")
+                .setParameter("id", board.getId())
+                .executeUpdate();
+    }
+
+
     public Board saveBoardReturn(Board board){
         em.persist(board);
         return board;
@@ -36,7 +50,7 @@ public class BoardRepository {
     //즐겨 찾기 기능
     public void addFavorite(Favorite favorite){
         em.persist(favorite);
-    }
+    } 
 
     //즐겨 찾기 목록
     public List<Board> favoriteList(Long id){
@@ -86,12 +100,27 @@ public class BoardRepository {
                 .getResultList();
     }
 
-    //검색기능
-    public List<Board> findSearchBoards(String keyword){
+    //제목 검색기능
+    public List<Board> findTitleSearchBoards(String keyword){
         return em.createQuery("SELECT b FROM Board b WHERE b.title LIKE :keyword", Board.class)
                 .setParameter("keyword", "%" + keyword + "%")
                 .getResultList();
     }
+
+    //내용 검색기능
+    public List<Board> findContentSearchBoards(String keyword){
+        return em.createQuery("SELECT b FROM Board b WHERE b.content LIKE :keyword", Board.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getResultList();
+    }
+
+    //제목 + 내용 검색기능
+    public List<Board> findContentTitleSearchBoards(String keyword){
+        return em.createQuery("SELECT b FROM Board b WHERE (b.content LIKE :keyword) OR (b.title LIKE :keyword)", Board.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getResultList();
+    }
+
 
     //조회 정렬 기능
     public List<Board> findClickBoards(){

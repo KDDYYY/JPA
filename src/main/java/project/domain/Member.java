@@ -29,6 +29,8 @@ public class Member {
     @Column(name = "PASSWORD")
     private Long pw;
 
+    private int pt = 0;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Board> boards = new ArrayList<>();
 
@@ -39,6 +41,15 @@ public class Member {
     private List<Favorite> favorites = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "sendMember")
+    @Column(name = "send_member_id")
+    private List<Message> sentMessages = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "receiveMember")
+    @Column(name = "receive_member_id")
+    private List<Message> receivedMessages = new ArrayList<>();
+
 
     public Member(String name, String email, Long pw) {
         this.name = name;
@@ -46,10 +57,5 @@ public class Member {
         this.pw = pw;
     }
 
-    //즐겨찾기
-    public void addFavorite(Favorite favorite){
-        favorites.add(favorite);
-        favorite.setMember(this);
-    }
 
 }

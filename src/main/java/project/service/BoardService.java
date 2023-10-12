@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -13,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import project.domain.*;
 import project.repository.BoardRepository;
 
-import java.awt.print.Pageable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -55,11 +53,51 @@ public class BoardService {
             member.getBoards().add(board);
     }
 
-
     @Transactional
     public void saveBoard(Board board, Member member){
         board.setMember(member);
         boardRepository.saveBoard(board);
+        member.getBoards().add(board);
+    }
+
+    //게시판 수정
+    @Transactional
+    public void modifyBoard(Board board, Member member, List<MultipartFile> files) throws IOException {
+        board.setMember(member);
+
+        // 이전 이미지 파일 삭제 로직 추가 (예: boardRepository.deleteImages(board))
+        boardRepository.deleteImage(board);
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String originalFilename = file.getOriginalFilename();
+                String extension = StringUtils.getFilenameExtension(originalFilename);
+                String storedFilename = UUID.randomUUID().toString() + "." + extension;
+                String fullPath = uploadPath + storedFilename;
+                long fileSize = file.getSize();
+
+                // 파일을 서버에 저장
+                Files.write(Paths.get(fullPath), file.getBytes());
+
+                // Image 엔티티 생성 및 저장
+                Image image = new Image(originalFilename, storedFilename, fullPath, fileSize, extension, board);
+
+                boardRepository.saveFile(image);
+                board.getImages().add(image);
+            }
+        }
+        // 게시물 수정
+        boardRepository.modifyBoard(board);
+        member.getBoards().add(board);
+    }
+
+//게시판 수정
+    @Transactional
+    public void modifyBoard(Board board, Member member){
+        board.setMember(member);
+        boardRepository.deleteImage(board);
+
+        boardRepository.modifyBoard(board);
         member.getBoards().add(board);
     }
 
@@ -132,9 +170,19 @@ public class BoardService {
         return  boardRepository.findReplyList(boardId);
     }
 
-    //검색 기능
-    public List<Board> findSearchBoards(String keyword){
-        return boardRepository.findSearchBoards(keyword);
+    //제목 검색 기능
+    public List<Board> findTitleSearchBoards(String keyword){
+        return boardRepository.findTitleSearchBoards(keyword);
+    }
+
+    //내용 검색 기능
+    public List<Board> findContentSearchBoards(String keyword){
+        return boardRepository.findContentSearchBoards(keyword);
+    }
+
+    //제목+내용 검색기능
+    public List<Board> findContentTitleSearchBoards(String keyword){
+        return boardRepository.findContentTitleSearchBoards(keyword);
     }
 
     //조회 순 정력

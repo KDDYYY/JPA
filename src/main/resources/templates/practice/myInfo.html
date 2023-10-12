@@ -74,6 +74,18 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .sendMessage-table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        .receiveMessage-table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -85,6 +97,7 @@
     <p><strong>이름:</strong> <span th:text="${session.member.name}"></span></p>
     <p><strong>이메일:</strong> <span th:text="${session.member.email}"></span></p>
     <p><strong>비밀번호:</strong> <span th:text="${session.member.pw}"></span></p>
+    <p><strong>내 포인트:</strong> <span th:text="${pt}"></span></p>
 </div>
 
 <h2>내가 쓴 글 목록</h2>
@@ -117,8 +130,37 @@
     </tbody>
 </table>
 
+<h2>내가 보낸 메세지</h2>
+<table class="sendMessage-table">
+<thead>
+<tr>
+    <th>제목</th>
+    <th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="message : ${sendMessage}"> <!-- 수정된 부분 -->
+    <td class="cell title-cell" th:text="${message.title}"></td>
+    <td class="cell content-cell" th:text="${message.content}"></td>
+</tr>
+</tbody>
+</table>
 
-
+<h2>내가 받은 메세지</h2>
+<table class="receiveMessage-table">
+    <thead>
+    <tr>
+        <th>제목</th>
+        <th>내용</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="message : ${receiveMessage}"> <!-- 수정된 부분 -->
+        <td class="cell title-cell" th:text="${message.title}"></td>
+        <td class="cell content-cell" th:text="${message.content}"></td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>

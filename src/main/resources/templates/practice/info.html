@@ -82,11 +82,14 @@
 
 <!-- 사용자 정보 표시 -->
 <div class="user-info">
-    <h2 th:text="${session.member.name + '님의 정보'}"></h2>
-    <p><strong>이메일:</strong> <span th:text="${session.member.email}"></span></p>
+    <h2 th:text="${member.name + '님의 정보'}"></h2>
+    <p><strong>이메일:</strong> <span th:text="${member.email}"></span></p>
 </div>
 
-<h2 th:text ="${session.member.name + '님이 쓴 게시글 목록'}"></h2>
+<!-- 메시지 보내기 버튼 -->
+<a th:href="@{/message/{id}(id=${member.id})}" class="back-link">메시지 보내기</a>
+
+<h2 th:text ="${member.name + '님이 쓴 게시글 목록'}"></h2>
 
 <table class="board-table">
     <thead>

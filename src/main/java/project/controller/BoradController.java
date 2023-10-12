@@ -1,15 +1,11 @@
 package project.controller;
 
 
-import com.oracle.wls.shaded.org.apache.xpath.operations.Mult;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.domain.Board;
@@ -20,9 +16,7 @@ import project.service.BoardService;
 import project.service.FileUploadService;
 import project.service.MemberService;
 
-import java.io.File;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,7 +27,7 @@ public class BoradController {
 
     private final MemberService memberService;
 
-    FileUploadService fileUploadService;
+    private final FileUploadService fileUploadService;
 
     @GetMapping("/home")
     public String main(Model model, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size){
@@ -81,7 +75,7 @@ public class BoradController {
                 return "redirect:/members/login";
             }
 
-            Member member = memberService.findByEmail(sessionMember.getEmail());
+            Member member = memberService.findOne(sessionMember.getId());
 
             // 게시물 저장
             Board board = new Board(boardForm.getTitle(), boardForm.getContent(), LocalDateTime.now());
@@ -91,6 +85,8 @@ public class BoradController {
             } else {
                 boardService.saveBoard(board, member); //이미지가 포함되지 않을 때
             }
+
+            memberService.increaseBoardMemberPoint(member.getId()); // 포인트 올리기
 
             return "redirect:/home";
         } catch (Exception e) {
@@ -117,6 +113,60 @@ public class BoradController {
         return "practice/boardView";
     }
 
+    //게시물 수정
+    @GetMapping("/boards/{id}/modify")
+    public String modifyBoard(@PathVariable Long id, Model model, HttpSession session ){
+        Member sessionMember = (Member) session.getAttribute("member");
+
+        Member member = memberService.findByEmail(sessionMember.getEmail());
+        Board board = boardService.findOne(id);
+
+        if(member.getId() != board.getMember().getId()){
+            return "practice/board";
+        }
+
+        model.addAttribute("board", board);
+        model.addAttribute("boardForm", new BoardForm());
+
+        return "practice/modify";
+        }
+
+    //게시물 수정
+    @PostMapping("/boards/{id}/modify")
+    public String modifyBoard(@PathVariable Long id, @Valid BoardForm boardForm, HttpSession session,
+                              @RequestParam("files") List<MultipartFile> files){
+        try {
+            Member sessionMember = (Member) session.getAttribute("member");
+
+            if (sessionMember == null) {
+                return "redirect:/members/login";
+            }
+
+            Member member = memberService.findByEmail(sessionMember.getEmail());
+            Board existingBoard = boardService.findOne(id);
+
+            if (member.getId() != existingBoard.getMember().getId()) {
+                return "practice/board";
+            }
+
+            // 게시물 수정
+            existingBoard.setTitle(boardForm.getTitle());
+            existingBoard.setContent(boardForm.getContent());
+
+            if (files != null && !files.isEmpty() && !files.get(0).isEmpty()) {
+                boardService.modifyBoard(existingBoard, member, files); //이미지가 포함 될 때
+            } else {
+                boardService.modifyBoard(existingBoard, member); //이미지가 포함되지 않을 때
+            }
+
+            return "redirect:/home";
+        }catch (Exception e){
+            return "redirect:/members/login";
+        }
+    }
+
+
+
     //댓글기능
     @PostMapping("/boards/{id}/reply")
     public String setReply(@ModelAttribute ReplyForm replyForm , HttpSession session, @PathVariable Long id){
@@ -127,14 +177,27 @@ public class BoradController {
         Reply reply = new Reply(replyForm.getContent(), replyForm.getRate());
 
         boardService.saveReply(reply, board, member);
+        memberService.increaseReplyMemberPoint(member.getId());
 
         return "redirect:/boards/" + id;
 }
 
 //검색기능
 @GetMapping("/boards/search")
-    public String searchBoards(@RequestParam("keyword")String keyword, Model model){
-    List<Board> searchResults = boardService.findSearchBoards(keyword);
+    public String searchBoards(@RequestParam("keyword")String keyword, @RequestParam("searchOption") String searchOption, Model model){
+
+    List<Board> searchResults;
+
+    if ("title".equals(searchOption)) {
+        searchResults = boardService.findTitleSearchBoards(keyword);
+    } else if ("content".equals(searchOption)) {
+        searchResults = boardService.findContentSearchBoards(keyword);
+    } else if ("titleAndContent".equals(searchOption)) {
+        searchResults = boardService.findContentTitleSearchBoards(keyword);
+    } else {
+        searchResults = boardService.findTitleSearchBoards(keyword);
+    }
+
     model.addAttribute("searchResults", searchResults);
     return "practice/searchList";
 }
