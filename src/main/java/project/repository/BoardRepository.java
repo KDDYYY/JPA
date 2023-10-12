@@ -5,6 +5,10 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.domain.*;
+import project.domain.Board;
+import project.domain.Favorite;
+import project.domain.Image;
+import project.domain.Reply;
 
 import java.util.List;
 

@@ -43,11 +43,15 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
 
+
     @OneToMany(mappedBy = "board")
     private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<BoardLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board")
+    private List<Image> images = new ArrayList<>();
 
     public Board(String title, String content, LocalDateTime boardDate) {
         this.title = title;
