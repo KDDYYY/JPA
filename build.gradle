@@ -28,6 +28,8 @@ repositories {
 }
 
 dependencies {
+	implementation 'com.google.maps:google-maps-services:0.15.0' // Google Maps API 의존성
+
 	implementation group: 'org.glassfish.web', name: 'jakarta.servlet.jsp.jstl', version: '2.0.0'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 
@@ -37,14 +39,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.projectlombok:lombok:1.18.26'
+	implementation 'org.projectlombok:lombok:1.18.26'
 
-	implementation group: 'org.apache.commons', name: 'commons-io', version: '2.11.0' //FilenameUtils 사용
+	//implementation group: 'org.apache.commons', name: 'commons-io', version: '2.11.0' //FilenameUtils 사용
 
-    testImplementation 'junit:junit:4.13.2'
 	testImplementation 'junit:junit:4.13.2'
 	testImplementation 'junit:junit:4.13.2'
-    testImplementation 'junit:junit:4.13.2'
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'junit:junit:4.13.2'
 	testImplementation 'junit:junit:4.13.2'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
