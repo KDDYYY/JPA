@@ -32,14 +32,12 @@ public class Board {
 
     private int click = 0; // 조회수
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "board")
     private List<Image> images = new ArrayList<>();

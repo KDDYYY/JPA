@@ -40,22 +40,20 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Favorite> favorites = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "sendMember")
+    @OneToMany(mappedBy = "sendMember", cascade = CascadeType.ALL)
     @Column(name = "send_member_id")
     private List<Message> sentMessages = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "receiveMember")
+    @OneToMany(mappedBy = "receiveMember", cascade = CascadeType.ALL)
     @Column(name = "receive_member_id")
     private List<Message> receivedMessages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Address> addresses = new ArrayList<>();
 
     public Member(String name, String email, Long pw) {
         this.name = name;
         this.email = email;
         this.pw = pw;
     }
-
-
 }

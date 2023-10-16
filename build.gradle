@@ -30,6 +30,7 @@ repositories {
 dependencies {
 	implementation 'com.google.maps:google-maps-services:0.15.0' // Google Maps API 의존성
 
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
 	implementation group: 'org.glassfish.web', name: 'jakarta.servlet.jsp.jstl', version: '2.0.0'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 

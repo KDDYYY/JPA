@@ -15,10 +15,10 @@ public class MapController {
 
     private final GoogleMapsService mapsService;
 
-    @GetMapping("/map")
-    public String showMap() {
-        return "practice/map";
-    }
+//    @GetMapping("/map")
+//    public String showMap() {
+//        return "practice/map";
+//    }
 
 
 //    @PostMapping("/geocode")
