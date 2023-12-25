@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 120%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <title>날씨 정보</title>
+</head>
+<body>
+<!-- 수정된 표현 방식 사용 -->
+<div th:replace="~{practice/footer/header}"></div>
+
+<!-- 입력 폼 추가 -->
+<form th:action="@{/weather}" method="post">
+    <label for="city">도시명:</label>
+    <input type="text" id="city" name="city" required>
+    <button type="submit">검색</button>
+</form>
+
+<div th:if="${apiResponse != null}">
+    <!-- 이미지를 표시할 div 추가 -->
+    <div id="weatherIcon"></div>
+
+    <p>날씨: <span id="description"></span></p>
+    <p>현재 온도: <span id="temp"></span>°C</p>
+    <p>체감 온도: <span id="feelsLike"></span>°C</p>
+    <p>최저 기온: <span id="tempMin"></span>°C</p>
+    <p>최고 기온: <span id="tempMax"></span>°C</p>
+    <p>습도: <span id="humidity"></span>%</p>
+    <p>기압: <span id="pressure"></span> hPa</p>
+    <p>풍속: <span id="speed"></span> m/s</p>
+
+    <!-- Thymeleaf 코드를 이용하여 서버로부터 전달받은 JSON 데이터를 파싱하는 스크립트 추가 -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Parse the JSON data
+        var jsonData = /*[(${apiResponse})]*/ '';
+
+        // Extract necessary information
+        var description = jsonData.weather[0].description;
+        var temp = jsonData.main.temp;
+        var feelsLike = jsonData.main.feels_like;
+        var tempMin = jsonData.main.temp_min;
+        var tempMax = jsonData.main.temp_max;
+        var humidity = jsonData.main.humidity;
+        var pressure = jsonData.main.pressure;
+        var speed = jsonData.wind.speed;
+        var iconCode = jsonData.weather[0].icon;
+
+        // Set values to HTML elements
+        document.getElementById('description').innerText = description;
+        document.getElementById('temp').innerText = temp;
+        document.getElementById('feelsLike').innerText = feelsLike;
+        document.getElementById('tempMin').innerText = tempMin;
+        document.getElementById('tempMax').innerText = tempMax;
+        document.getElementById('humidity').innerText = humidity;
+        document.getElementById('pressure').innerText = pressure;
+        document.getElementById('speed').innerText = speed;
+
+        // Set the icon image URL
+        var iconImageUrl = 'https://openweathermap.org/img/w/' + iconCode + '.png';
+
+        // Set the icon image to the weatherIcon div
+        var weatherIconDiv = document.getElementById('weatherIcon');
+        var iconImage = document.createElement('img');
+        iconImage.src = iconImageUrl;
+        weatherIconDiv.appendChild(iconImage);
+        /*]]>*/
+    </script>
+</div>
+
+<div th:if="${apiResponse == null}">
+    <p>도시명을 입력해주세요.</p>
+</div>
+</body>
+</html>

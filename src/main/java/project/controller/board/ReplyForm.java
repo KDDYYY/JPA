@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.board;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -85,6 +85,15 @@
     <div th:if="${session.member != null and session.member.id == board.member.id}">
         <a th:href="@{/boards/{id}/modify(id=${board.id})}" class="btn btn-primary">수정하기</a>
     </div>
+
+    <form th:action="@{/boards/{id}/like(id=${board.id})}" method="post">
+        <button type="submit" class="btn btn-primary">
+            <span th:if="${not isLiked}">좋아요</span>
+            <span th:if="${isLiked}">좋아요 취소</span>
+            <span th:text="${likeCount}"></span> <!-- 좋아요 개수 표시 -->
+            <span th:if="${isLiked}" class="heart-icon">&#x2764;</span> <!-- 하트 이모지 -->
+        </button>
+    </form>
 </div>
 
 

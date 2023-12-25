@@ -4,10 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.domain.Board;
-import project.domain.Favorite;
-import project.domain.Image;
-import project.domain.Reply;
+import project.domain.*;
 
 import java.util.List;
 
@@ -28,7 +25,46 @@ public class BoardRepository {
         em.persist(image);
     }
 
-    // 게시물 수정
+    //좋아요 등록 -------
+    public void saveBoardLike(BoardLike boardLike) {
+        em.persist(boardLike);
+    }
+
+    // 게시물에 대한 특정 사용자의 좋아요 삭제
+    public void removeBoardLike(Member member, Board board) {
+        em.createQuery("DELETE FROM BoardLike bl WHERE bl.member = :member AND bl.board = :board")
+                .setParameter("member", member)
+                .setParameter("board", board)
+                .executeUpdate();
+    }
+
+    public BoardLike findBoardLike(Member member, Board board){
+        return em.createQuery("select bl from BoardLike bl where bl.member =:member AND bl.board = : board", BoardLike.class)
+                .setParameter("member", member)
+                .setParameter("board", board)
+                .getSingleResult();
+    }
+
+
+    // 게시물에 대한 특정 사용자의 좋아요 여부 확인
+    public Long countBoardLikesByMemberAndBoard(Member member, Board board) {
+        return em.createQuery(
+                        "SELECT COUNT(bl) FROM BoardLike bl WHERE bl.member = :member AND bl.board = :board", Long.class)
+                .setParameter("member", member)
+                .setParameter("board", board)
+                .getSingleResult();
+    }
+
+    //게시물에 대한 좋아요 개수
+    public long countLikesForBoard(Board board) {
+        return em.createQuery(
+                        "SELECT COUNT(bl) FROM BoardLike bl WHERE bl.board = :board", Long.class)
+                .setParameter("board", board)
+                .getSingleResult();
+    }
+
+
+    // 게시물 수정---------------------
     public void modifyBoard(Board board) {
             // 업데이트된 엔티티를 merge
             em.merge(board);

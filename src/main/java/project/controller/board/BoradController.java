@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.board;
 
 
 import jakarta.servlet.http.HttpSession;
@@ -95,16 +95,29 @@ public class BoradController {
     }
 
 
-    //게시물 조회
+    // 게시물 조회
     @GetMapping("/boards/{id}")
-    public String viewBoard(@PathVariable Long id, Model model) {
+    public String viewBoard(@PathVariable Long id, Model model, HttpSession session) {
         Board board = boardService.increaseBoardClick(id);
         List<Reply> replies = boardService.findReplies(id);
         List<Image> images = boardService.findImagesByBoardId(id);
 
+        // 좋아요 개수 조회
+        long likeCount = boardService.getLikeCountForBoard(board);
+
+        // 좋아요 여부 확인
+        boolean isLiked = false;
+        Member sessionMember = (Member) session.getAttribute("member");
+        if (sessionMember != null) {
+            Member member = memberService.findByEmail(sessionMember.getEmail());
+            isLiked = boardService.isLikedByMember(member, board);
+        }
+
         model.addAttribute("board", board);
         model.addAttribute("ReplyForm", new ReplyForm());
         model.addAttribute("replies", replies);
+        model.addAttribute("likeCount", likeCount);
+        model.addAttribute("isLiked", isLiked);
 
         if (images != null && !images.isEmpty()) {
             model.addAttribute("images", images);
@@ -113,13 +126,37 @@ public class BoradController {
         return "practice/boardView";
     }
 
-    //게시물 수정
-    @GetMapping("/boards/{id}/modify")
-    public String modifyBoard(@PathVariable Long id, Model model, HttpSession session ){
+
+
+    // 좋아요 추가 또는 취소
+    @PostMapping("/boards/{id}/like")
+    public String toggleLike(@PathVariable Long id, HttpSession session) {
         Member sessionMember = (Member) session.getAttribute("member");
+
+        if(sessionMember == null)
+            return "redirect:/members/login";
 
         Member member = memberService.findByEmail(sessionMember.getEmail());
         Board board = boardService.findOne(id);
+
+        if (boardService.isLikedByMember(member, board)) {
+            // 이미 좋아요를 누른 상태이면 좋아요 취소
+            boardService.removeBoardLike(member, board);
+        } else {
+            // 좋아요를 누르지 않은 상태이면 좋아요 추가
+            boardService.saveBoardLike(member, board);
+        }
+
+        return "redirect:/boards/" + id;
+    }
+
+    //게시물 수정
+    @GetMapping("/boards/{id}/modify")
+    public String modifyBoard(@PathVariable Long boardId, Model model, HttpSession session){
+        Member sessionMember = (Member) session.getAttribute("member");
+
+        Member member = memberService.findByEmail(sessionMember.getEmail());
+        Board board = boardService.findOne(boardId);
 
         if(member.getId() != board.getMember().getId()){
             return "practice/board";
@@ -167,7 +204,7 @@ public class BoradController {
 
 
 
-    //댓글기능
+    //댓글 기능
     @PostMapping("/boards/{id}/reply")
     public String setReply(@ModelAttribute ReplyForm replyForm , HttpSession session, @PathVariable Long id){
         Member sessionMember = (Member) session.getAttribute("member");
@@ -182,7 +219,7 @@ public class BoradController {
         return "redirect:/boards/" + id;
 }
 
-//검색기능
+//검색 기능
 @GetMapping("/boards/search")
     public String searchBoards(@RequestParam("keyword")String keyword, @RequestParam("searchOption") String searchOption, Model model){
 
@@ -218,7 +255,6 @@ public class BoradController {
             Board board = boardService.findOne(boardId);
 
             Member member = memberService.findByEmail(sessionMember.getEmail()); // 세션에서 가져온 Member를 영속 상태로 가져옴
-
 
             boardService.addFavorite(member, board);
 

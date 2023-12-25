@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.country;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;

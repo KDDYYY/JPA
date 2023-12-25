@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.country;
 
 import lombok.Getter;
 import lombok.Setter;

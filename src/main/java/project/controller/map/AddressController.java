@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.map;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -44,5 +44,4 @@ public class AddressController {
             return "practice/home";
         }
     }
-
 }

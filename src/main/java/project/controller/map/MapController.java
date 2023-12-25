@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.map;
 
 import com.google.maps.model.GeocodingResult;
 import lombok.RequiredArgsConstructor;

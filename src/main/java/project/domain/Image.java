@@ -17,7 +17,7 @@ public class Image {
     @Column(name = "IMAGE_ID")
     private Long id;
 
-    private String uploadFileName; ////사용자 지정 파일 이름
+    private String uploadFileName; //사용자 지정 파일 이름
 
     private String  storedFileName; //저장된 파일 이름
 

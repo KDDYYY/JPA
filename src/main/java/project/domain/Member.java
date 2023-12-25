@@ -29,6 +29,7 @@ public class Member {
     @Column(name = "PASSWORD")
     private Long pw;
 
+    @Column(name = "POINT")
     private int pt = 0;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -50,6 +51,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Address> addresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<BoardLike> likes = new ArrayList<>();
 
     public Member(String name, String email, Long pw) {
         this.name = name;

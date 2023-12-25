@@ -2,56 +2,633 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <style>
-        h3 {
-            background-color: #aaffaa;
-            text-align: center;
-            padding: 10px;
+        table {
+            border-collapse: collapse;
+            width: 120%;
+            margin-top: 20px;
         }
-        .navbar {
-            background-color: #f0f0f0;
+
+        th, td {
             padding: 10px;
-            display: flex;
-            justify-content: flex-end;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
         }
     </style>
 
     <meta charset="UTF-8">
     <title>나라 정보</title>
 </head>
-<body>
-<a th:href="@{/home}"><h3>KIM SERVER</h3></a>
 
-<div class="navbar">
-    <a th:if="${session.member == null}" href="/members/login">로그인 |</a>
-    <a th:if="${session.member == null}" href="/members/register">회원가입 |</a>
-    <a th:if="${session.member != null}" href="/members/logout">로그아웃 |</a>
-    <a th:if="${session.member != null}" href="/members/myInfo">내 정보 |</a>
-    <a th:if="${session.member != null}" href="/members/favorites">즐겨찾기 목록 |</a>
-    <a th:if="${session.member != null}" th:text="${session.member.name + ' 님 반갑습니다 |'}"></a>
-    <a href="/boards/new">글쓰기 |</a>
-    <a href="/map"> 구글 맵 |</a>
-    <a href="/country"> 나라 검색</a>
-</div>
+<body>
+<div th:replace="practice/footer/header"></div>
 
 <h1>나라 정보</h1>
 <form th:action="@{/country}" method="post">
-    <label for="page">Page:</label>
-    <input type="text" id="page" name="page" />
+    <label for="countryName">국가명:</label>
+    <select id="countryName" name="countryName"></select>
     <br/>
-    <label for="perPage">Per Page:</label>
-    <input type="text" id="perPage" name="perPage" />
+    <label for="countryIso">국가 ISO:</label>
+    <input type="text" id="countryIso" name="countryIso" readonly />
     <br/>
-    <label for="countryName">Country Name:</label>
-    <input type="text" id="countryName" name="countryName" />
-    <br/>
-    <label for="countryIso">Country ISO:</label>
-    <input type="text" id="countryIso" name="countryIso" />
-    <br/>
-    <button type="submit">Submit</button>
+    <button type="submit">제출</button>
 </form>
 
-<h2>API Response:</h2>
-<div th:utext="${apiResponse}"></div>
+<div id="selectedCountryName">선택한 국가:</div>
+<div id="apiResponse"></div>
+
+<script>
+    // 국가 목록 배열에 추가
+    var countryList = [
+        "가봉", "가이아나", "감비아", "건지 섬", "과들루프", "과테말라", "괌", "그레나다", "조지아", "그리스", "그린란드", "기니", "기니비사우", "나미비아", "나우루", "나이지리아", "남극", "남아프리카 공화국",
+        "네덜란드", "네덜란드령 안틸레스", "네팔", "노르웨이", "노퍽 섬", "누벨칼레도니", "뉴질랜드", "니우에", "니제르", "니카라과", "대한민국","덴마크", "도미니카", "도미니카 공화국", "독일", "동티모르", "라오스", "라이베리아",
+        "라트비아", "러시아", "레바논", "레소토", "레위니옹", "루마니아", "룩셈부르크", "르완다", "리비아", "리투아니아", "리히텐슈타인", "마다가스타르", "마르티니크", "마셜 제도", "마요트", "마카오", "마케도니아 공화국", "말라위",
+        "말레이시아", "말리", "맨 섬", "멕시코", "모나코", "모로코", "모리셔스", "모리타니", "모잠비크", "몬테네그로", "몬트세랫", "몰도바", "몰디브", "몰타", "몽골", "미국", "미국령 군소 제도", "미국령 버진아일랜드", "미얀마",
+        "미크로네시아 연방", "바누아투", "바레인", "바베이도스", "바하마", "방글라데시", "버뮤다", "베냉", "베네수엘라", "베트남", "벨기에", "벨라루스", "벨리즈", "보스니아 헤르체고비나", "보츠와나", "볼리비아", "부룬디", "부르키나파소",
+        "부베 섬", "부탄", "북마리아나 제도", "불가리아", "브라질", "브루나이", "사모아", "사우디아라비아", "사우스조지아 사우스샌드위치 제도", "산마리노", "상투메 프린시페", "생피에르 미클롱", "서사하라", "세네갈", "세르비아",
+        "세이셸", "세인트루시아", "세인트빈센트 그레나딘", "세인트키츠 네비스", "세인트헬레나", "소말리아", "솔로몬 제도", "수단", "수리남", "스리랑카", "스발바르 얀마옌", "스와질란드", "스웨덴", "스위스", "스페인", "슬로바키아", "슬로베니아",
+        "시리아", "시에라리온", "싱가포르", "아랍에미리트", "아루바", "아르메니아", "아르헨티나", "아메리칸사모아", "아이슬란드", "아이티", "아일랜드", "아제르바이잔", "아프가니스탄", "안도라", "알바니아", "알제리", "앙골라", "앤티가 바부다",
+        "앵귈라", "에리트레아", "에스토니아", "에콰도르", "에티오피아", "엘살바도르", "영국", "영국령 버진아일랜드", "영국령 인도양 지역", "예멘", "오만", "오스트레일리아", "오스트리아", "온두라스", "올란드 제도", "요르단", "우간다", "우루과이",
+        "우즈베키스탄", "우크라이나", "왈리스 퓌튀나", "이라크", "이란", "이스라엘", "이집트", "이탈리아", "인도네시아", "인도", "일본", "자메이카", "잠비아", "저지섬", "적도 기니", "조선민주주의인민공화국", "중앙아프리카 공화국", "중화민국",
+        "중화인민공화국", "지부티", "지브롤터", "짐바브웨", "차드", "체코", "칠레", "카메룬", "카보베르데", "카자흐스탄", "카타르", "캄보디아", "캐나다", "케냐", "케이맨 제도", "코모로", "코스타리카", "코코스 제도", "코트디부아르",
+        "콜롬비아", "콩고 공화국", "콩고 민주 공화국", "쿠바", "쿠웨이트", "쿡 제도", "크로아티아", "크리스마스 섬", "키르기스스탄", "키리바시", "키프로스", "타이", "타지키스탄", "탄자니아", "터크스 케이커스 제도", "터키", "토고",
+        "토켈라우", "통가", "투르크메니스탄", "투발루", "튀니지", "트리니다드 토바고", "파나마", "파라과이", "파키스탄", "파푸아 뉴기니", "팔라우", "팔레스타인", "페로 제도", "페루", "포르투갈", "포클랜드 제도", "폴란드", "푸에르토리코",
+        "프랑스", "프랑스령 기아나", "프랑스령 남부와 남극 지역", "프랑스령 폴리네시아", "피지", "핀란드", "필리핀", "핏케언 제도", "헝가리", "홍콩"
+    ];
+    var countryNameSelect = document.getElementById("countryName");
+    var countryIsoInput = document.getElementById("countryIso");
+    var selectedCountryDiv = document.getElementById("selectedCountryName");
+
+    for (var i = 0; i < countryList.length; i++) {
+        var option = document.createElement("option");
+        option.value = countryList[i];
+        option.text = countryList[i];
+        countryNameSelect.appendChild(option);
+    }
+    // 국가를 선택했을 때 국가 코드 자동 설정
+    countryNameSelect.addEventListener('change', function() {
+        var selectedCountry = countryNameSelect.value;
+        var countryIso = getCountryIso(selectedCountry);
+        countryIsoInput.value = countryIso;
+
+        selectedCountryDiv.innerText = "선택한 국가: " + selectedCountry;
+    });
+
+    // 국가 코드를 반환하는 함수
+    function getCountryIso(countryName) {
+        switch (countryName) {
+            case "가봉":
+                return "GA";
+            case "가이아나":
+                return "GY";
+            case "감비아":
+                return "GM";
+            case "건지 섬":
+                return "GG";
+            case "과들루프":
+                return "GP";
+            case "과테말라":
+                return "GT";
+            case "괌":
+                return "GU";
+            case "그레나다":
+                return "GD";
+            case "조지아":
+                return "GE";
+            case "그리스":
+                return "GR";
+            case "그린란드":
+                return "GL";
+            case "기니":
+                return "GN";
+            case "기니비사우":
+                return "GW";
+            case "나미비아":
+                return "NA";
+            case "나우루":
+                return "NR";
+            case "나이지리아":
+                return "NG";
+            case "남극":
+                return "AQ";
+            case "남아프리카 공화국":
+                return "ZA";
+            case "네덜란드":
+                return "NL";
+            case "네덜란드령 안틸레스":
+                return "AN";
+            case "네팔":
+                return "NP";
+            case "노르웨이":
+                return "NO";
+            case "노퍽 섬":
+                return "NF";
+            case "누벨칼레도니":
+                return "NC";
+            case "뉴질랜드":
+                return "NZ";
+            case "니우에":
+                return "NU";
+            case "니제르":
+                return "NE";
+            case "니카라과":
+                return "NI";
+            case "일본":
+                return "JP";
+            case "미국":
+            case "미국령 군소 제도":
+            case "미국령 버진아일랜드":
+                return "US";
+            case "대한민국":
+                return  "KR";
+            case "도미니카":
+                return "DM";
+            case "도미니카 공화국":
+                return "DO";
+            case "독일":
+                return "DE";
+            case "동티모르":
+                return "TL";
+            case "라오스":
+                return "LA";
+            case "라이베리아":
+                return "LR";
+            case "라트비아":
+                return "LV";
+            case "러시아":
+                return "RU";
+            case "레바논":
+                return "LB";
+            case "레소토":
+                return "LS";
+            case "레위니옹":
+                return "RE";
+            case "루마니아":
+                return "RO";
+            case "룩셈부르크":
+                return "LU";
+            case "르완다":
+                return "RW";
+            case "리비아":
+                return "LY";
+            case "리투아니아":
+                return "LT";
+            case "리히텐슈타인":
+                return "LI";
+            case "마다가스타르":
+                return "MG";
+            case "마르티니크":
+                return "MQ";
+            case "마셜 제도":
+                return "MH";
+            case "마요트":
+                return "YT";
+            case "마카오":
+                return "MO";
+            case "마케도니아 공화국":
+                return "MK";
+            case "말라위":
+                return "MW";
+            case "말레이시아":
+                return "MY";
+            case "말리":
+                return "ML";
+            case "맨 섬":
+                return "IM";
+            case "멕시코":
+                return "MX";
+            case "모나코":
+                return "MC";
+            case "모로코":
+                return "MA";
+            case "모리셔스":
+                return "MU";
+            case "모리타니":
+                return "MR";
+            case "모잠비크":
+                return "MZ";
+            case "몬테네그로":
+                return "ME";
+            case "몬트세랫":
+                return "MS";
+            case "몰도바":
+                return "MD";
+            case "몰디브":
+                return "MV";
+            case "몰타":
+                return "MT";
+            case "몽골":
+                return "MN";
+            case "미국":
+                return "US";
+            case "미국령 군소 제도":
+                return "UM";
+            case "미국령 버진아일랜드":
+                return "VI";
+            case "미얀마":
+                return "MM";
+            case "미크로네시아 연방":
+                return "FM";
+            case "바누아투":
+                return "VU";
+            case "바레인":
+                return "BH";
+            case "바베이도스":
+                return "BB";
+            case "바하마":
+                return "BS";
+            case "방글라데시":
+                return "BD";
+            case "버뮤다":
+                return "BM";
+            case "베냉":
+                return "BJ";
+            case "베네수엘라":
+                return "VE";
+            case "베트남":
+                return "VN";
+            case "벨기에":
+                return "BE";
+            case "벨라루스":
+                return "BY";
+            case "벨리즈":
+                return "BZ";
+            case "보스니아 헤르체고비나":
+                return "BA";
+            case "보츠와나":
+                return "BW";
+            case "볼리비아":
+                return "BO";
+            case "부룬디":
+                return "BI";
+            case "부르키나파소":
+                return "BF";
+            case "부베 섬":
+                return "BV";
+            case "부탄":
+                return "BT";
+            case "북마리아나 제도":
+                return "MP";
+            case "불가리아":
+                return "BG";
+            case "브라질":
+                return "BR";
+            case "브루나이":
+                return "BN";
+            case "사모아":
+                return "WS";
+            case "사우디아라비아":
+                return "SA";
+            case "사우스조지아 사우스샌드위치 제도":
+                return "GS";
+            case "산마리노":
+                return "SM";
+            case "상투메 프린시페":
+                return "ST";
+            case "생피에르 미클롱":
+                return "PM";
+            case "서사하라":
+                return "EH";
+            case "세네갈":
+                return "SN";
+            case "세르비아":
+                return "RS";
+            case "세이셸":
+                return "SC";
+            case "세인트루시아":
+                return "LC";
+            case "세인트빈센트 그레나딘":
+                return "VC";
+            case "세인트키츠 네비스":
+                return "KN";
+            case "세인트헬레나":
+                return "SH";
+            case "소말리아":
+                return "SO";
+            case "솔로몬 제도":
+                return "SB";
+            case "수단":
+                return "SD";
+            case "수리남":
+                return "SR";
+            case "스리랑카":
+                return "LK";
+            case "스발바르 얀마옌":
+                return "SJ";
+            case "스와질란드":
+                return "SZ";
+            case "스웨덴":
+                return "SE";
+            case "스위스":
+                return "CH";
+            case "스페인":
+                return "ES";
+            case "슬로바키아":
+                return "SK";
+            case "슬로베니아":
+                return "SI";
+            case "시리아":
+                return "SY";
+            case "시에라리온":
+                return "SL";
+            case "싱가포르":
+                return "SG";
+            case "아랍에미리트":
+                return "AE";
+            case "아루바":
+                return "AW";
+            case "아르메니아":
+                return "AM";
+            case "아르헨티나":
+                return "AR";
+            case "아메리칸사모아":
+                return "AS";
+            case "아이슬란드":
+                return "IS";
+            case "아이티":
+                return "HT";
+            case "아일랜드":
+                return "IE";
+            case "아제르바이잔":
+                return "AZ";
+            case "아프가니스탄":
+                return "AF";
+            case "안도라":
+                return "AD";
+            case "알바니아":
+                return "AL";
+            case "알제리":
+                return "DZ";
+            case "앙골라":
+                return "AO";
+            case "앤티가 바부다":
+                return "AG";
+            case "앵귈라":
+                return "AI";
+            case "에리트레아":
+                return "ER";
+            case "에스토니아":
+                return "EE";
+            case "에콰도르":
+                return "EC";
+            case "에티오피아":
+                return "ET";
+            case "엘살바도르":
+                return "SV";
+            case "영국":
+                return "GB";
+            case "영국령 버진아일랜드":
+                return "VG";
+            case "영국령 인도양 지역":
+                return "IO";
+            case "예멘":
+                return "YE";
+            case "오만":
+                return "OM";
+            case "오스트레일리아":
+                return "AU";
+            case "오스트리아":
+                return "AT";
+            case "온두라스":
+                return "HN";
+            case "올란드 제도":
+                return "AX";
+            case "요르단":
+                return "JO";
+            case "우간다":
+                return "UG";
+            case "우루과이":
+                return "UY";
+            case "우즈베키스탄":
+                return "UZ";
+            case "우크라이나":
+                return "UA";
+            case "왈리스 퓌튀나":
+                return "WF";
+            case "이라크":
+                return "IQ";
+            case "이란":
+                return "IR";
+            case "이스라엘":
+                return "IL";
+            case "이집트":
+                return "EG";
+            case "이탈리아":
+                return "IT";
+            case "인도네시아":
+                return "ID";
+            case "인도":
+                return "IN";
+            case "일본":
+                return "JP";
+            case "자메이카":
+                return "JM";
+            case "잠비아":
+                return "ZM";
+            case "저지섬":
+                return "JE";
+            case "적도 기니":
+                return "GQ";
+            case "조선민주주의인민공화국":
+                return "KP";
+            case "중앙아프리카 공화국":
+                return "CF";
+            case "중화민국":
+                return "TW";
+            case "중화인민공화국":
+                return "CN";
+            case "지부티":
+                return "DJ";
+            case "지브롤터":
+                return "GI";
+            case "짐바브웨":
+                return "ZW";
+            case "차드":
+                return "TD";
+            case "체코":
+                return "CZ";
+            case "칠레":
+                return "CL";
+            case "카메룬":
+                return "CM";
+            case "카보베르데":
+                return "CV";
+            case "카자흐스탄":
+                return "KZ";
+            case "카타르":
+                return "QA";
+            case "캄보디아":
+                return "KH";
+            case "캐나다":
+                return "CA";
+            case "케냐":
+                return "KE";
+            case "케이맨 제도":
+                return "KY";
+            case "코모로":
+                return "KM";
+            case "코스타리카":
+                return "CR";
+            case "코코스 제도":
+                return "CC";
+            case "코트디부아르":
+                return "CI";
+            case "콜롬비아":
+                return "CO";
+            case "콩고 공화국":
+                return "CG";
+            case "콩고 민주 공화국":
+                return "CD";
+            case "쿠바":
+                return "CU";
+            case "쿠웨이트":
+                return "KW";
+            case "쿡 제도":
+                return "CK";
+            case "크로아티아":
+                return "HR";
+            case "크리스마스 섬":
+                return "CX";
+            case "키르기스스탄":
+                return "KG";
+            case "키리바시":
+                return "KI";
+            case "키프로스":
+                return "CY";
+            case "타이":
+                return "TH";
+            case "타지키스탄":
+                return "TJ";
+            case "탄자니아":
+                return "TZ";
+            case "터크스 케이커스 제도":
+                return "TC";
+            case "터키":
+                return "TR";
+            case "토고":
+                return "TG";
+            case "토켈라우":
+                return "TK";
+            case "통가":
+                return "TO";
+            case "투르크메니스탄":
+                return "TM";
+            case "투발루":
+                return "TV";
+            case "튀니지":
+                return "TN";
+            case "트리니다드 토바고":
+                return "TT";
+            case "파나마":
+                return "PA";
+            case "파라과이":
+                return "PY";
+            case "파키스탄":
+                return "PK";
+            case "파푸아 뉴기니":
+                return "PG";
+            case "팔라우":
+                return "PW";
+            case "팔레스타인":
+                return "PS";
+            case "페로 제도":
+                return "FO";
+            case "페루":
+                return "PE";
+            case "포르투갈":
+                return "PT";
+            case "포클랜드 제도":
+                return "FK";
+            case "폴란드":
+                return "PL";
+            case "푸에르토리코":
+                return "PR";
+            case "프랑스":
+                return "FR";
+            case "프랑스령 기아나":
+                return "GF";
+            case "프랑스령 남부와 남극 지역":
+                return "TF";
+            case "프랑스령 폴리네시아":
+                return "PF";
+            case "피지":
+                return "FJ";
+            case "핀란드":
+                return "FI";
+            case "필리핀":
+                return "PH";
+            case "핏케언 제도":
+                return "PN";
+            case "헝가리":
+                return "HU";
+            case "홍콩":
+                return "HK";
+            default:
+                return "N/A"; // 해당하는 국가가 없을 때
+        }
+    }
+
+</script>
+
+<h2>Country Info</h2>
+<div id="jsonResponse"></div>
+<script th:inline="javascript">
+    var jsonResponse = document.getElementById('jsonResponse');
+
+    // HTML로 출력할 문자열을 초기화
+    var html = '<table>';
+
+    // JSON 데이터 파싱
+    var jsonData = JSON.parse(/*[[${apiResponse}]]*/ "");
+
+    // JSON 데이터가 유효한지 확인
+    if (jsonData && jsonData.data && jsonData.data.length > 0) {
+        var data = jsonData.data[0];
+
+        // 원하는 키를 표시할 수 있도록 키와 표시 이름을 매핑
+        var keyMapping = {
+            "alarm_lvl": "경보단계",
+            "continent_cd": "대륙 코드",
+            "continent_eng_nm": "영문 대륙명",
+            "country_eng_nm": "영문 국가명",
+            "country_iso_alp2": "ISO 2자리 코드",
+            "dang_map_download_url": "위험 지도 경로",
+            "flag_download_url": "국기",
+            "map_download_url": "지도",
+            "region_ty": "지역 유형",
+            "remark": "경보 내용",
+            "written_dt": "작성일"
+        };
+
+        html += '<table>';
+
+        for (var key in keyMapping) {
+            if (keyMapping.hasOwnProperty(key) && data.hasOwnProperty(key)) {
+                var value = data[key];
+
+                // 값이 null이면 '제공 되지 않음'으로 대체
+                value = value === null ? '제공 되지 않음' : value;
+
+                // 값이 이미지 URL인지 확인
+                if (key.includes("_download_url") && value.startsWith("https://")) {
+                    // 이미지 URL이면 <img> 요소 추가
+                    html += '<tr><td><strong>' + keyMapping[key] + '</strong></td><td><img src="' + value + '"></td></tr>';
+                } else {
+                    html += '<tr><td><strong>' + keyMapping[key] + '</strong></td><td>' + value + '</td></tr>';
+                }
+            }
+        }
+
+        html += '</table>';
+    }
+
+    // HTML을 웹 페이지에 추가
+    jsonResponse.innerHTML = html;
+</script>
 
 </body>
 </html>

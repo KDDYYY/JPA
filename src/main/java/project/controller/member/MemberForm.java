@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.member;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

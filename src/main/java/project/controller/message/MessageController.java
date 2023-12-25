@@ -1,4 +1,4 @@
-package project.controller;
+package project.controller.message;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import project.domain.Board;
 import project.domain.Member;
 import project.domain.Message;
 import project.service.BoardService;

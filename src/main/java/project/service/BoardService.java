@@ -53,6 +53,7 @@ public class BoardService {
             member.getBoards().add(board);
     }
 
+    //게시물 등록 (이미지 없을 떼)
     @Transactional
     public void saveBoard(Board board, Member member){
         board.setMember(member);
@@ -60,7 +61,36 @@ public class BoardService {
         member.getBoards().add(board);
     }
 
-    //게시판 수정
+    //게시물 좋아요 등록 ------------
+    @Transactional
+    public void saveBoardLike(Member member, Board board) {
+        BoardLike boardLike = new BoardLike(member, board);
+        boardRepository.saveBoardLike(boardLike);
+
+        board.addLike(boardLike);
+    }
+
+    //좋아요 삭제 메소드
+    @Transactional
+    public void removeBoardLike(Member member, Board board) {
+        BoardLike boardLike = boardRepository.findBoardLike(member, board);
+        boardRepository.removeBoardLike(member, board);
+
+        board.removeLike(boardLike);
+    }
+
+    //좋아요 여부 확인 메소드
+    public boolean isLikedByMember(Member member, Board board) {
+        Long likeCount = boardRepository.countBoardLikesByMemberAndBoard(member, board);
+        return likeCount > 0;
+    }
+
+    //해당 게시물의 전체 좋아요 개수 조회
+    public long getLikeCountForBoard(Board board) {
+        return boardRepository.countLikesForBoard(board);
+    }
+
+    //게시판 수정 -----------------------------
     @Transactional
     public void modifyBoard(Board board, Member member, List<MultipartFile> files) throws IOException {
         board.setMember(member);
@@ -91,7 +121,7 @@ public class BoardService {
         member.getBoards().add(board);
     }
 
-//게시판 수정
+    //게시판 수정(이미지 있을 경우)
     @Transactional
     public void modifyBoard(Board board, Member member){
         board.setMember(member);
@@ -100,7 +130,6 @@ public class BoardService {
         boardRepository.modifyBoard(board);
         member.getBoards().add(board);
     }
-
 
 
     //해당 게시물의 이미지
@@ -126,7 +155,7 @@ public class BoardService {
     public Board increaseBoardClick(Long boardId) {
         Board board = boardRepository.findByBoardId(boardId);
         if (board != null) {
-            board.setClick(board.getClick() + 1);
+            board.addClick();
             return boardRepository.saveBoardReturn(board);
         }
         return null;
@@ -146,7 +175,7 @@ public class BoardService {
         }
     }
 
-    //페이지로 게시글 목록]
+    //페이지로 게시글 목록
     public List<Board> findPaginatedBoards(int page, int size){
         return boardRepository.findPaginatedBoards(page, size);
     }

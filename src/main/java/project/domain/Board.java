@@ -30,7 +30,11 @@ public class Board {
     @Column(name = "UPLOAD_DATE")
     private LocalDateTime boardDate;
 
+    @Column(name = "CLICK_COUNT")
     private int click = 0; // 조회수
+
+    @Column(name = "LIKE_COUNT")
+    private int likeCount = 0; //좋아요 수
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -42,9 +46,27 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private List<Image> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<BoardLike> likes = new ArrayList<>();
+
     public Board(String title, String content, LocalDateTime boardDate) {
         this.title = title;
         this.content = content;
         this.boardDate = boardDate;
     }
+
+    public void addClick(){
+        click++;
+    }
+
+    public void addLike(BoardLike like) {
+        likes.add(like);
+        likeCount++;
+    }
+
+    public void removeLike(BoardLike like) {
+        likes.remove(like);
+        likeCount--;
+    }
+
 }
