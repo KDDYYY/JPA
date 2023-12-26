@@ -16,7 +16,7 @@
  <h1>사용 오픈 API</h1>
  - Google Map<br/>
  - 공공 API (외교부 국가 지역별 여행경보)<br/>
- - OpenWeatherMap
+ - OpenWeatherMap<br/>
 
  
 ![image](https://github.com/KDDYYY/Traveling/assets/109346159/49e52115-9dfc-4944-9a81-159aca9d1d73)
