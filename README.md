@@ -1,4 +1,4 @@
-<h2>💡Travel Information Web Using JPA </br></h2>
+<h2>💡Travel Information</br></h2>
 
 <h1>프로젝트 소개</h1>
  - 웹을 통해 여행 정보에 대한 커뮤니티<br/>
