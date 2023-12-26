@@ -1,4 +1,22 @@
 <h2>💡Travel Information Web Using JPA </br></h2>
-<h3>-Spring Boot JPA를 활용하여 각 나라 별 여행 정보 (경보 날씨 정보 등)을 제공하며 게시판을 통해 서로 소통을 할 수 있음</h3>
 
+<h1>프로젝트 소개</h1>
+ - 웹을 통해 여행 정보에 대한 커뮤니티
+ - 각 나라의 지역에 따른 여행 경보 제공
+ - 나라 도시의 현재 날씨 제공
+ - 구글 지도 제공 
+
+ <h1>사용 기술</h1>
+ - Spring Boot
+ - JPA
+ - JavaScript
+ - HTML
+ - CSS
+
+ <h1>사용 오픈 API</h1>
+ - Google Map
+ - 공공 API (외교부 국가 지역별 여행경보)
+ - OpenWeatherMap
+
+ 
 ![image](https://github.com/KDDYYY/Traveling/assets/109346159/49e52115-9dfc-4944-9a81-159aca9d1d73)
