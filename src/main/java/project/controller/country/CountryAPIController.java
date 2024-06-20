@@ -10,11 +10,12 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class CountryAPIController {
 
+    @Value("${country.api.key}")
+    private String apiKey;
+
     private final RestTemplate restTemplate;
     @GetMapping("api/country")
     public ResponseEntity<String> country() {
-        String apiKey = "w/onpWcWwpLmwUkq6/yqyulugmKO3k7KnTMRfy/hQJs/s7GM9dU474qebwH3AoXxdJl3eE7Ar0CmKOiKaZHdcw==";
-
         String apiUrl = "http://apis.data.go.kr/1262000/TravelAlarmService0404/getTravelAlarm0404List?" +
                 "serviceKey=" + apiKey +
                 "&page=1" +
@@ -27,8 +28,6 @@ public class CountryAPIController {
     }
     @PostMapping("api/country")
     public ResponseEntity<String> country(@RequestBody RequestCountry requestCountry) {
-        String apiKey = "w/onpWcWwpLmwUkq6/yqyulugmKO3k7KnTMRfy/hQJs/s7GM9dU474qebwH3AoXxdJl3eE7Ar0CmKOiKaZHdcw==";
-
         String apiUrl = "http://apis.data.go.kr/1262000/TravelAlarmService0404/getTravelAlarm0404List?" +
                 "serviceKey=" + apiKey +
                 "&page=" + requestCountry.getPage() +

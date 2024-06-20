@@ -3,6 +3,10 @@ google:
     api:
       key: AIzaSyC026p5bYXcL407xPnS0-bwp_trmKuAb84
 
+country:
+  api :
+    key: w/onpWcWwpLmwUkq6/yqyulugmKO3k7KnTMRfy/hQJs/s7GM9dU474qebwH3AoXxdJl3eE7Ar0CmKOiKaZHdcw==
+
 upload:
   #path: src/main/resources/static/uploads/
   path: src/main/webapp/uploads/
