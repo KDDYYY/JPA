@@ -24,10 +24,7 @@ import java.util.List;
 public class BoradController {
 
     private final BoardService boardService;
-
     private final MemberService memberService;
-
-    private final FileUploadService fileUploadService;
 
     @GetMapping("/home")
     public String main(Model model, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size){
@@ -41,14 +38,6 @@ public class BoradController {
         return "practice/home";
     }
 
-    //jsp 페이지
-//    @GetMapping("/home")
-//    public String main(Model model){
-//        List<Board> boards = boardService.findBoards();
-//        model.addAttribute("boards", boards);
-//        return "main";
-//    }
-
     //게시물 등록
     @GetMapping("/boards/new")
     public String createBoard(Model model, HttpSession session) {
@@ -56,7 +45,7 @@ public class BoradController {
 
         if (sessionMember != null) {
             model.addAttribute("BoardForm", new BoardForm());
-            return "practice/board";
+            return "practice/board/board";
         } else {
             return "redirect:/members/login";
         }
@@ -123,7 +112,7 @@ public class BoradController {
             model.addAttribute("images", images);
         }
 
-        return "practice/boardView";
+        return "practice/board/boardView";
     }
 
 
@@ -165,7 +154,7 @@ public class BoradController {
         model.addAttribute("board", board);
         model.addAttribute("boardForm", new BoardForm());
 
-        return "practice/modify";
+        return "practice/board/modify";
         }
 
     //게시물 수정
@@ -182,8 +171,8 @@ public class BoradController {
             Member member = memberService.findByEmail(sessionMember.getEmail());
             Board existingBoard = boardService.findOne(id);
 
-            if (member.getId() != existingBoard.getMember().getId()) {
-                return "practice/board";
+            if (!member.getId().equals(existingBoard.getMember().getId())) {
+                return "practice/board/board";
             }
 
             // 게시물 수정
@@ -236,7 +225,7 @@ public class BoradController {
     }
 
     model.addAttribute("searchResults", searchResults);
-    return "practice/searchList";
+    return "practice/board/searchList";
 }
 
 //조회순 정렬
@@ -244,7 +233,7 @@ public class BoradController {
     public String searchClickBoards(Model model){
         List<Board> clickResults = boardService.findClickBoards();
         model.addAttribute("clickResults", clickResults);
-        return "practice/clickList";
+        return "practice/board/clickList";
     }
 
     //즐겨찾기 기능

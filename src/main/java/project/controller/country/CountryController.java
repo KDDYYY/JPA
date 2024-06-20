@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import project.InitDb;
 import project.domain.APIKey;
 import project.service.APIKeyService;
 
@@ -26,7 +25,7 @@ public class CountryController {
 
     @GetMapping("/country")
     public String countryForm() {
-        return "practice/countrySearch";
+        return "practice/country/countrySearch";
     }
 
     @PostMapping("/country")
@@ -48,6 +47,6 @@ public class CountryController {
 
         model.addAttribute("apiResponse", response.getBody());
 
-        return "practice/countrySearch";
+        return "practice/country/countrySearch";
     }
 }

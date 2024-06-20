@@ -17,12 +17,11 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class WeatherController {
 
-    @Autowired
     private final RestTemplate restTemplate;
 
     @GetMapping("/weather")
     public String weatherForm() {
-        return "practice/weatherSearch";
+        return "practice/country/weatherSearch";
     }
 
     @PostMapping("/weather")
@@ -41,7 +40,7 @@ public class WeatherController {
             model.addAttribute("apiResponse", response.getBody());
         }
 
-        return "practice/weatherSearch";
+        return "practice/country/weatherSearch";
     }
 
 }

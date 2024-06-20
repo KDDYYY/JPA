@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>홈</title>
+    <title>검색 결과</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style>
         .board-table {
@@ -59,6 +59,7 @@
             font-size: 16px;
             width: 300px;
         }
+
         .search-input button {
             background-color: #333;
             color: #fff;
@@ -67,36 +68,6 @@
             padding: 5px 10px;
             cursor: pointer;
             font-size: 16px;
-        }
-        .sort-button {
-            background-color: #007bff;
-            color: white;
-            width: 60px; /* 설정할 너비 크기 */
-            height: 30px; /* 설정할 높이 크기 */
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            text-align: center;
-            line-height: 30px; /* 높이와 동일한 크기로 설정 */
-        }
-        .pagination{
-            background-color: #f0f0f0;
-            color: white;
-            width: 60px; /* 설정할 너비 크기 */
-            height: 30px; /* 설정할 높이 크기 */
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            text-align: center;
-            line-height: 30px; /* 높이와 동일한 크기로 설정 */
-        }
-        .favorite-button {
-            background-color: #ff6347;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
         }
     </style>
 </head>
@@ -117,9 +88,6 @@
     </form>
 </div>
 
-<div class="sort-button">
-    <a href="/boards/click" class="sort-button">조회순</a>
-</div>
 
 <div>
     <table class="board-table">
@@ -130,41 +98,22 @@
             <th class="date-cell">수정날짜</th>
             <th class="author-cell">글쓴이</th>
             <th class="author-cell">조회수</th>
-            <th class="author-cell">즐겨찾기</th>
         </tr>
         </thead>
-
         <tbody>
-        <tr th:each="board : ${boards}">
+        <tr th:each="board : ${searchResults}"> <!-- 검색 결과를 반복문으로 출력 -->
             <td class="cell title-cell" th:text="${board.title}"></td>
-
             <td class="cell content-cell">
                 <a th:href="@{/boards/{id}(id=${board.id})}" th:text="${board.content}"></a>
             </td>
-
             <td class="cell author-cell" th:text="${board.boardDate}"></td>
             <td class="cell date-cell">
                 <a th:href="@{/members/{id}(id=${board.member.id})}" th:text="${board.member.name}"></a>
             </td>
-
             <td class="cell author-cell" th:text="${board.click}"></td>
-
-            <td class="cell author-cell">
-                <form th:action="@{/boards/favorite}" method="post">
-                    <input type="hidden" name="boardId" th:value="${board.id}" />
-                    <button type="submit" class="favorite-button">즐겨찾기</button>
-                </form>
-            </td>
         </tr>
         </tbody>
-
-        <div class="pagination">
-            <a th:if="${page > 1}" th:href="@{/home(page=${page - 1}, size=${size})}">이전</a>
-            <a th:if="${boards.size() == size}" th:href="@{/home(page=${page + 1}, size=${size})}">다음</a>
-        </div>
-
     </table>
 </div>
-
 </body>
 </html>

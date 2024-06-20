@@ -31,11 +31,11 @@ public class MessageController {
         Member receiveMember = memberService.findOne(id);
 
         if(sessionMember == null)
-            return "practice/login";
+            return "practice/user/login";
 
         model.addAttribute("member", receiveMember);
         model.addAttribute("MessageForm", new MessageForm());
-        return "practice/sendMessage";
+        return "practice/user/sendMessage";
     }
 
     @PostMapping("/message/{id}")

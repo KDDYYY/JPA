@@ -45,7 +45,7 @@ public class MemberController {
         model.addAttribute("myBoards", myBoards);
         model.addAttribute("sendMessage", sendMessage);
         model.addAttribute("receiveMessage", receiveMessage);
-        return "practice/myInfo";
+        return "practice/user/myInfo";
     }
 
 
@@ -53,7 +53,7 @@ public class MemberController {
     @GetMapping("/members/register")
     public String signUpForm(Model model){
         model.addAttribute("memberForm", new MemberForm());
-        return "practice/register";
+        return "practice/user/register";
     }
 
     //회원가입
@@ -61,7 +61,7 @@ public class MemberController {
     public String signUp(@Valid MemberForm form, BindingResult result) {
     try {
         if (result.hasErrors()) {
-            return "practice/register";
+            return "practice/user/register";
         }
 
         Member member = new Member(form.getName(), form.getName(), form.getPw());
@@ -69,7 +69,7 @@ public class MemberController {
         memberService.join(member);
         return "redirect:/members/login";
     }catch (DataAccessException e){
-        return "practice/register";
+        return "practice/user/register";
         }
     }
 
@@ -77,7 +77,7 @@ public class MemberController {
     @GetMapping("/members/login")
     public String signInForm(Model model){
         //model.addAttribute("memberForm", new MemberForm());
-        return "practice/login";
+        return "practice/user/login";
     }
 
     //로그인
@@ -86,7 +86,7 @@ public class MemberController {
        try {
            Member member = memberService.findByEmail(form.getEmail());
            if(member == null || (!member.getPw().equals(form.getPw()))){
-               return "practice/login";
+               return "practice/user/login";
            }
 
            //성공
@@ -96,7 +96,7 @@ public class MemberController {
 
            //login 실패
        }catch (DataAccessException e){
-           return "practice/login";
+           return "practice/user/login";
        }
     }
 
@@ -115,22 +115,17 @@ public class MemberController {
         List<Board> memberBoard = memberService.memberBoard(id);
         model.addAttribute("member",member);
         model.addAttribute("memberBoard", memberBoard);
-        return "practice/info";
+        return "practice/user/info";
     }
-
 
 
     //회원탈퇴
     @GetMapping("/members/withdraw")
     public String withdraw(HttpServletRequest request){
-//        HttpSession session = request.getSession();
-//        session.invalidate();
+        HttpSession session = request.getSession();
+        session.invalidate();
         return "redirect:/home";
     }
-
-
-
-
 }
 
 
