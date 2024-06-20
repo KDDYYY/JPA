@@ -25,7 +25,7 @@ public class CountryController {
 
     @GetMapping("/country")
     public String countryForm() {
-        return "practice/countrySearch";
+        return "practice/country/countrySearch";
     }
 
     @PostMapping("/country")
@@ -47,6 +47,6 @@ public class CountryController {
 
         model.addAttribute("apiResponse", response.getBody());
 
-        return "practice/countrySearch";
+        return "practice/country/countrySearch";
     }
 }

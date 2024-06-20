@@ -1,11 +1,9 @@
 package project.controller.map;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +28,7 @@ public class AddressController {
             Member sessionMember = (Member) session.getAttribute("member");
 
             if (sessionMember == null) {
-                return "practice/register";
+                return "practice/user/register";
             }else if(address == null){
                 return "practice/map";
             }
